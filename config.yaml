@@ -1,0 +1,25 @@
+agent:
+  model: gpt-4o
+  max_attempts: 3
+  timeout: 30
+
+judge:
+  default: blind_recompute   # PRODUCTION DEFAULT judge (see CLAUDE.md). options: blind_recompute | rubric | self_validate
+  model: claude-opus-4-7
+  temperature: 0.0           # NOTE: Opus 4.7 rejects temperature; kept for interface compat, never sent to the API
+  mode: no_reference         # no_reference | with_reference
+  max_tool_iters: 6          # agentic loop cap for blind_recompute / self_validate
+  prompt_version: v1         # rubric judge prompt version (v1 kept after v1-vs-v2 A/B showed no gain)
+
+experiment:
+  split: dev
+  output_dir: data/results
+
+calibration:
+  n_sample: 100
+  random_seed: 42
+
+reliability:
+  n_bootstrap: 1000
+  ci: 0.95
+  consistency_repeats: 3

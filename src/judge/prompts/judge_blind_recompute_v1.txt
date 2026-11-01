@@ -1,0 +1,104 @@
+================================================================================
+REVEAL & JUDGE
+
+You have just SOLVED this task yourself, blind, and committed your own answer:
+
+    YOUR BLIND ANSWER: {blind_answer}
+
+Now — and ONLY now — you are shown an AI agent's solution to the SAME task. Your
+job switches from solving to JUDGING. Evaluate the agent's solution by comparing
+it to the answer YOU already derived independently above. Because you committed
+your own answer BEFORE seeing the agent's work, you are NOT anchored to the
+agent — trust your own computation as the primary ground truth.
+
+Be strict. Do not give credit for plausible claims that are not supported by the
+agent's code or output. If the agent's code references columns that do not exist
+in the dataset, treat that as a hallucinated_column failure. If the agent's final
+answer contains a value that does not appear in its stdout and cannot be derived
+from the shown code, treat it as unsupported_claim. If the agent's stderr shows an
+error or its code did not execute, that is a code_execution_error. If the agent's
+answer disagrees with the value YOU computed blindly, the agent likely did not
+solve the task correctly (wrong_answer / wrong_aggregation / etc.).
+
+--------------------------------------------------------------------------------
+THE AGENT'S SOLUTION (revealed now)
+
+Agent final answer:
+{agent_final_answer}
+
+Agent code:
+{agent_code}
+
+Agent execution stdout:
+{stdout}
+
+Agent execution stderr:
+{stderr}
+
+Deterministic pre-check results (computed mechanically, for grounding):
+{precheck_results}
+
+================================================================================
+SCORING RUBRIC
+
+Score each dimension on an integer 1-5 scale:
+  1 = wrong or unusable
+  2 = major issues
+  3 = partially correct
+  4 = mostly correct
+  5 = correct and well-supported
+
+Dimensions:
+- task_success_score:        Did the agent's final answer actually solve the task
+                             as asked? Use YOUR blind answer as the primary
+                             reference: if it disagrees with the agent, the agent
+                             did not succeed.
+- code_correctness_score:    Was the agent's code logically correct and executable?
+- data_handling_score:       Did the agent load, filter, aggregate, join, group,
+                             and transform the data correctly?
+- statistical_validity_score: Did the agent use appropriate math/statistics (no
+                             invalid assumptions, no overclaimed causality)?
+- reproducibility_score:     Could the agent's answer be reproduced exactly from
+                             its code and logs alone?
+- final_answer_quality_score: Was the agent's answer clear, in the requested
+                             format, and not over-explained?
+- reasoning_quality_score:   Was the agent's method reasonable, justified, and
+                             supported by the data?
+
+================================================================================
+CRITICAL ERRORS
+
+Record any concrete failures in the agent's solution in `critical_errors`. Each
+entry has:
+  - type:     one of the FAILURE_TYPES below
+  - severity: "low" | "medium" | "high"
+  - explanation: a short, specific description grounded in the agent's code/logs/
+                 data or in your own blind computation
+
+FAILURE_TYPES (use these exact strings, nothing else):
+  wrong_answer, wrong_filter, wrong_aggregation, wrong_join, wrong_groupby,
+  wrong_sorting, wrong_column, wrong_unit, rounding_error, missing_value_error,
+  data_leakage, code_execution_error, timeout, hallucinated_column,
+  unsupported_claim, incomplete_answer, format_error
+
+If there are no critical errors, return an empty list.
+
+================================================================================
+OUTPUT
+
+Call the `record_judgment` tool exactly once with your verdict. Provide every
+score as an integer 1-5, the full list of critical_errors, an overall_pass
+boolean (your holistic judgment of whether the agent's answer should be
+accepted), a confidence between 0 and 1, and a concise judge_explanation that
+justifies the verdict by citing specific evidence from the agent's code, stdout,
+dataset, or your own blind recomputation.
+
+Also provide the two self-validation fields:
+  - self_validation_agrees:  Compare the AGENT's answer to {blind_answer} (the
+                             answer YOU derived blindly before seeing the agent).
+                             Set "agree" if the agent's answer matches yours,
+                             "disagree" if it does not, "could_not_validate" if
+                             you genuinely could not derive a comparable value.
+  - validation_summary:      a short description of the comparison: what you
+                             computed blindly, what the agent reported, and how
+                             they line up.
